@@ -1,0 +1,119 @@
+package com.example.figury_lab10;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.view.View;
+
+import com.example.figury_lab10.R;
+
+
+public class Figura extends View {
+
+    private int[] randomValues = new int[100];
+
+    public Figura(Context context, AttributeSet attrs) {
+        super(context, attrs);
+
+        java.util.Random random = new java.util.Random();
+        for (int i = 0; i < randomValues.length; i++) {
+            randomValues[i] = random.nextInt(1000);
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        int width = getWidth();
+        int halfWidth = width / 2;
+        int height = getHeight();
+        int maxSize = Math.min(halfWidth, height) - 10;
+
+        int posX, posY, sizeX, sizeY;
+        int pointer = 0;
+
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.FILL);
+
+        
+        paint.setColor(Color.DKGRAY);
+        
+        canvas.drawRect(0, 0, width, height, paint);
+
+        CharSequence type = getContentDescription();
+        if (type == null) type = "brak";
+
+        for (int i = 0; i < 10; i++) {
+
+            paint.setARGB(255,
+                    randomValues[pointer++ % 100] % 256,
+                    randomValues[pointer++ % 100] % 256,
+                    randomValues[pointer++ % 100] % 256);
+
+            if (type.equals("kolo")) {
+                sizeX = randomValues[pointer++ % 100] % maxSize;
+                posX  = randomValues[pointer++ % 100] % (halfWidth - sizeX);
+                posY  = randomValues[pointer++ % 100] % (height - sizeX);
+                canvas.drawCircle(posX, posY, sizeX, paint);
+
+            } else if (type.equals("elipsa")) {
+                sizeX = randomValues[pointer++ % 100] % maxSize;
+                sizeY = randomValues[pointer++ % 100] % maxSize;
+                posX  = randomValues[pointer++ % 100] % (halfWidth - sizeX);
+                posY  = randomValues[pointer++ % 100] % (height - sizeY);
+                canvas.drawOval(new RectF(posX, posY, posX + sizeX, posY + sizeY), paint);
+
+            } else if (type.equals("prostokat")) {
+                sizeX = randomValues[pointer++ % 100] % maxSize;
+                sizeY = randomValues[pointer++ % 100] % maxSize;
+                posX  = randomValues[pointer++ % 100] % (halfWidth - sizeX);
+                posY  = randomValues[pointer++ % 100] % (height - sizeY);
+                canvas.drawRect(posX, posY, posX + sizeX, posY + sizeY, paint);
+
+            } else if (type.equals("kolisty")) {
+                sizeX = randomValues[pointer++ % 100] % maxSize;
+                sizeY = randomValues[pointer++ % 100] % maxSize;
+                posX  = randomValues[pointer++ % 100] % (halfWidth - sizeX);
+                posY  = randomValues[pointer++ % 100] % (height - sizeY);
+                canvas.drawRoundRect(new RectF(posX, posY, posX + sizeX, posY + sizeY), 20, 20, paint);
+
+            } else if (type.equals("luk")) {
+                sizeX = randomValues[pointer++ % 100] % maxSize;
+                sizeY = randomValues[pointer++ % 100] % maxSize;
+                posX  = randomValues[pointer++ % 100] % (halfWidth - sizeX);
+                posY  = randomValues[pointer++ % 100] % (height - sizeY);
+
+                canvas.drawArc(
+                        new RectF(posX, posY, posX + sizeX, posY + sizeY),
+                        randomValues[pointer++ % 100] % 360,
+                        randomValues[pointer++ % 100] % 360,
+                        false,
+                        paint
+                );
+
+            } else if (type.equals("linia")) {
+                sizeX = randomValues[pointer++ % 100] % halfWidth;
+                sizeY = randomValues[pointer++ % 100] % height;
+                posX  = randomValues[pointer++ % 100] % halfWidth;
+                posY  = randomValues[pointer++ % 100] % height;
+
+                canvas.drawLine(posX, posY, sizeX, sizeY, paint);
+            }
+        }
+
+        
+        paint.setTextSize(getResources().getDimension(R.dimen.titlehight));
+        paint.setTextAlign(Paint.Align.RIGHT);
+        paint.setColor(Color.CYAN);
+        canvas.drawText(type.toString(), width - 20, height / 2, paint);
+        
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        paint.setColor(Color.WHITE);
+        canvas.drawRect(0, 0, width, height, paint);
+
+        super.onDraw(canvas);
+        }
+}
